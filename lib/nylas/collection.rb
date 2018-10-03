@@ -35,6 +35,11 @@ module Nylas
       SearchCollection.new(model: model, api: api, constraints: constraints.merge(where: { q: query }))
     end
 
+    def source(source)
+      raise ModelNotSourceFilterableError, model unless model.sourceable?
+      self.class.new(model: model, api: api, constraints: constraints.merge(source: source))
+    end
+
     # The collection now returns a string representation of the model in a particular mime type instead of
     # Model objects
     # @return [Collection<String>]

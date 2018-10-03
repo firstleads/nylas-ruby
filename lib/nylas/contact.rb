@@ -8,6 +8,7 @@ module Nylas
     self.listable = true
     self.showable = true
     self.filterable = true
+    self.source_filterable = true
     self.updatable = true
     self.destroyable = true
 

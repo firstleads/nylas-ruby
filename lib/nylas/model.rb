@@ -16,7 +16,7 @@ module Nylas
       model.extend(ClassMethods)
       model.extend(Forwardable)
       model.def_delegators :model_class, :creatable?, :filterable?, :listable?, :searchable?, :showable?,
-                           :updatable?, :destroyable?
+                           :updatable?, :destroyable?, :source_filterable?
       model.allows_operations
     end
 
@@ -78,12 +78,12 @@ module Nylas
     # Allows you to narrow in exactly what kind of model you're working with
     module ClassMethods
       attr_accessor :raw_mime_type, :creatable, :showable, :filterable, :searchable, :listable, :updatable,
-                    :destroyable
+                    :destroyable, :source_filterable
       attr_writer :resources_path
 
       # rubocop:disable Metrics/ParameterLists
       def allows_operations(creatable: false, showable: false, listable: false, filterable: false,
-                            searchable: false, updatable: false, destroyable: false)
+                            searchable: false, updatable: false, destroyable: false, source_filterable: false)
 
         self.creatable ||= creatable
         self.showable ||= showable
@@ -92,6 +92,7 @@ module Nylas
         self.searchable ||= searchable
         self.updatable ||= updatable
         self.destroyable ||= destroyable
+        self.source_filterable ||= source_filterable
       end
 
       # rubocop:enable Metrics/ParameterLists
@@ -109,6 +110,10 @@ module Nylas
 
       def filterable?
         filterable
+      end
+
+      def source_filterable?
+        source_filterable
       end
 
       def searchable?
