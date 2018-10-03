@@ -36,7 +36,7 @@ module Nylas
     end
 
     def source(source)
-      raise ModelNotSourceFilterableError, model unless model.sourceable?
+      raise ModelNotSourceFilterableError, model unless model.source_filterable?
       self.class.new(model: model, api: api, constraints: constraints.merge(source: source))
     end
 
