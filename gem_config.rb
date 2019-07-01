@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "./lib/nylas/version"
 
 # Consistently apply nylas' standard gem data across gems
@@ -8,7 +10,7 @@ module GemConfig
     gem.license = "MIT"
     gem.version = Nylas::VERSION
     gem.platform = "ruby"
-    gem.required_ruby_version = "~> 2.2"
+    gem.required_ruby_version = ">= 2.3"
     append_nylas_data(gem)
     dev_dependencies.each do |dependency|
       gem.add_development_dependency(*dependency)
@@ -23,17 +25,17 @@ module GemConfig
 
   def self.metadata
     {
-      "bug_tracker_uri"   => "https://github.com/nylas/nylas-ruby/issues",
-      "changelog_uri"     => "https://github.com/nylas/nylas-ruby/blob/master/CHANGELOG.md",
+      "bug_tracker_uri" => "https://github.com/nylas/nylas-ruby/issues",
+      "changelog_uri" => "https://github.com/nylas/nylas-ruby/blob/master/CHANGELOG.md",
       "documentation_uri" => "http://www.rubydoc.info/gems/nylas",
-      "homepage_uri"      => "https://www.nylas.com",
-      "source_code_uri"   => "https://github.com/nylas/nylas-ruby",
-      "wiki_uri"          => "https://github.com/nylas/nylas-ruby/wiki"
+      "homepage_uri" => "https://www.nylas.com",
+      "source_code_uri" => "https://github.com/nylas/nylas-ruby",
+      "wiki_uri" => "https://github.com/nylas/nylas-ruby/wiki"
     }
   end
 
   def self.dev_dependencies
-    [["bundler", "~> 1.3"],
+    [["bundler", ">= 1.3.0"],
      ["jeweler", "~> 2.1"],
      ["yard", "~> 0.9.0"],
      ["awesome_print", "~> 1.0"],
@@ -47,6 +49,7 @@ module GemConfig
      ["pry-nav", "~> 0.2.4"],
      ["pry-stack_explorer", "~> 0.4.9"],
      ["rspec", "~> 3.7"],
+     ["rspec-json_matcher", "~> 0.1"],
      ["webmock", "~> 3.0"],
      ["faker", "~> 1.8"],
      ["informed", "~> 1.0"],

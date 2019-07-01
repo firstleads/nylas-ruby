@@ -1,8 +1,9 @@
+# frozen_string_literal: true
+
 module Nylas
   # The constraints a particular GET request will include in their query params
   class Constraints
     attr_accessor :where, :limit, :offset, :view, :per_page, :accept, :source
-    # rubocop:disable Metrics/ParameterLists
     def initialize(where: {}, limit: nil, offset: 0, view: nil, per_page: 100, accept: "application/json", source: nil)
       self.where = where
       self.limit = limit
@@ -14,7 +15,7 @@ module Nylas
     end
 
     def merge(where: {}, limit: nil, offset: nil, view: nil, per_page: nil, accept: nil, source: nil)
-      Constraints.new(where: where.merge(where),
+      Constraints.new(where: self.where.merge(where),
                       limit: limit || self.limit,
                       per_page: per_page || self.per_page,
                       offset: offset || self.offset,
@@ -22,7 +23,6 @@ module Nylas
                       accept: accept || self.accept,
                       source: source || self.source)
     end
-    # rubocop:enable Metrics/ParameterLists
 
     def next_page
       merge(offset: offset + per_page)
@@ -51,6 +51,7 @@ module Nylas
       return constraints if constraints.is_a?(Constraints)
       return new(**constraints) if constraints.respond_to?(:key?)
       return new if constraints.nil?
+
       raise TypeError, "passed in constraints #{constraints} cannot be cast to a set of constraints"
     end
   end

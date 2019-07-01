@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Nylas
   # Ruby representation of the Nylas /threads API
   # @see https://docs.nylas.com/reference#threads
@@ -30,6 +32,8 @@ module Nylas
     attribute :folder_id, :string
 
     has_n_of_attribute :label_ids, :string
+
+    transfer :api, to: %i[labels folders]
 
     UPDATABLE_ATTRIBUTES = %i[label_ids folder_id starred unread].freeze
     def update(data)

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Nylas::Message do
   describe ".from_json" do
     it "Deserializes all the attributes into Ruby objects" do
@@ -64,6 +66,7 @@ describe Nylas::Message do
       expect(event.object).to eql "event"
       expect(event.account_id).to eql "acc-1234"
       expect(event.message_id).to eql "mess-8766"
+      expect(event.api).to be api
 
       expect(event).to be_busy
       expect(event.calendar_id).to eql "cal-0987"
@@ -93,24 +96,50 @@ describe Nylas::Message do
       expect(message.files[0].filename).to be_nil
       expect(message.files[0].id).to eql "file-abc35"
       expect(message.files[0].size).to be 1264
+      expect(message.files[0].api).to be api
 
       expect(message.files[1].content_type).to eql "application/ics"
       expect(message.files[1].filename).to eql "invite.ics"
       expect(message.files[1].id).to eql "file-xyz-9234"
       expect(message.files[1].size).to be 1264
+      expect(message.files[1].api).to be api
 
       # Note, messages will either be in a folder *or* labeled, not both.
       expect(message.folder.display_name).to eql "Inbox"
       expect(message.folder.name).to eql "inbox"
       expect(message.folder.id).to eql "folder-inbox"
+      expect(message.folder.api).to be api
 
       expect(message.labels[0].display_name).to eql "Inbox"
       expect(message.labels[0].id).to eql "label-inbox"
       expect(message.labels[0].name).to eql "inbox"
+      expect(message.labels[0].api).to be api
 
       expect(message.labels[1].display_name).to eql "All Mail"
       expect(message.labels[1].id).to eql "label-all"
       expect(message.labels[1].name).to eql "all"
+      expect(message.labels[1].api).to be api
+    end
+  end
+
+  describe "#expanded" do
+    it "fetch or return expanded version of message" do
+      api = instance_double(Nylas::API, execute: "{}")
+      message = described_class.from_json('{ "id": "message-1234" }', api: api)
+      data = { id: "draft-1234",
+               headers: { "In-Reply-To": "<evh5uy0shhpm5d0le89goor17-0@example.com>",
+                          "Message-Id": "<84umizq7c4jtrew491brpa6iu-0@example.com>",
+                          "References": ["<evh5uy0shhpm5d0le89goor17-0@example.com>"] } }
+
+      allow(api).to receive(:execute).with(method: :get,
+                                           path: "/messages/message-1234",
+                                           query: { view: "expanded" })
+                                     .and_return(data)
+      message.expanded
+
+      expect(message.expanded.headers.in_reply_to).to eql "<evh5uy0shhpm5d0le89goor17-0@example.com>"
+      expect(message.expanded.headers.message_id).to eql "<84umizq7c4jtrew491brpa6iu-0@example.com>"
+      expect(message.expanded.headers.references[0]).to eql "<evh5uy0shhpm5d0le89goor17-0@example.com>"
     end
   end
 end

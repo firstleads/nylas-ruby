@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 
 describe Nylas::Collection do
@@ -80,6 +82,29 @@ describe Nylas::Collection do
     it "Raises a not implemented error if the model is not creatable" do
       collection = described_class.new(model: NotCreatableModel, api: api)
       expect { collection.create(string: "1234") }.to raise_error(Nylas::ModelNotCreatableError)
+    end
+  end
+
+  describe "#count" do
+    it "returns collection count" do
+      collection = described_class.new(model: FullModel, api: api)
+      allow(api).to receive(:execute)
+        .with(method: :get, path: "/collection", query: { limit: 100, offset: 0, view: "count" }, headers: {})
+        .and_return(count: 1)
+
+      expect(collection.count).to be 1
+    end
+
+    it "returns collection count filtered by `where`" do
+      collection = described_class.new(model: FullModel, api: api)
+      allow(api).to receive(:execute)
+        .with(method: :get,
+              path: "/collection",
+              query: { id: "1234", limit: 100, offset: 0, view: "count" },
+              headers: {})
+        .and_return(count: 1)
+
+      expect(collection.where(id: "1234").count).to be 1
     end
   end
 end

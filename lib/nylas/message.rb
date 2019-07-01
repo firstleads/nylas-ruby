@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Nylas
   # Ruby representatin of a Nylas Message object
   # @see https://docs.nylas.com/reference#messages
@@ -31,8 +33,10 @@ module Nylas
 
     has_n_of_attribute :events, :event
     has_n_of_attribute :files, :file
-    attribute :folder, :label
+    attribute :folder, :folder
     has_n_of_attribute :labels, :label
+
+    transfer :api, to: %i[events files folder labels]
 
     def starred?
       starred
@@ -40,6 +44,13 @@ module Nylas
 
     def unread?
       unread
+    end
+
+    def expanded
+      return self unless headers.nil?
+
+      assign(api.execute(method: :get, path: resource_path, query: { view: "expanded" }))
+      self
     end
   end
 end

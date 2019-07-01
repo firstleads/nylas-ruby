@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Nylas
   # Ruby representatin of a Nylas Draft object
   # @see https://docs.nylas.com/reference#drafts
@@ -28,8 +30,10 @@ module Nylas
 
     has_n_of_attribute :events, :event
     has_n_of_attribute :files, :file
-    attribute :folder, :label
+    attribute :folder, :folder
     has_n_of_attribute :labels, :label
+
+    transfer :api, to: %i[events files folder labels]
 
     def send!
       save

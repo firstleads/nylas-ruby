@@ -1,7 +1,10 @@
+# frozen_string_literal: true
+
 require_relative "model/attribute_definition"
 require_relative "model/list_attribute_definition"
 require_relative "model/attributable"
 require_relative "model/attributes"
+require_relative "model/transferable"
 module Nylas
   # Include this to define a class to represent an object returned from the API
   module Model
@@ -13,6 +16,7 @@ module Nylas
 
     def self.included(model)
       model.include(Attributable)
+      model.include(Transferable)
       model.extend(ClassMethods)
       model.extend(Forwardable)
       model.def_delegators :model_class, :creatable?, :filterable?, :listable?, :searchable?, :showable?,
@@ -23,6 +27,7 @@ module Nylas
     def save
       result = if persisted?
                  raise ModelNotUpdatableError, self unless updatable?
+
                  execute(method: :put, payload: attributes.serialize, path: resource_path)
                else
                  create
@@ -40,11 +45,13 @@ module Nylas
 
     def create
       raise ModelNotCreatableError, self unless creatable?
+
       execute(method: :post, payload: attributes.serialize, path: resources_path)
     end
 
     def update(**data)
       raise ModelNotUpdatableError, model_class unless updatable?
+
       attributes.merge(**data)
       execute(method: :put, payload: attributes.serialize(keys: data.keys), path: resource_path)
       true
@@ -67,11 +74,12 @@ module Nylas
 
     def destroy
       raise ModelNotDestroyableError, self unless destroyable?
+
       execute(method: :delete, path: resource_path)
     end
 
     # @return [String] JSON String of the model.
-    def to_json
+    def to_json(_opts = {})
       JSON.dump(to_h)
     end
 
@@ -81,7 +89,6 @@ module Nylas
                     :destroyable, :source_filterable
       attr_writer :resources_path
 
-      # rubocop:disable Metrics/ParameterLists
       def allows_operations(creatable: false, showable: false, listable: false, filterable: false,
                             searchable: false, updatable: false, destroyable: false, source_filterable: false)
 
@@ -95,7 +102,6 @@ module Nylas
         self.source_filterable ||= source_filterable
       end
 
-      # rubocop:enable Metrics/ParameterLists
       def creatable?
         creatable
       end

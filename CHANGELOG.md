@@ -1,3 +1,28 @@
+### Unreleased
+
+* Nothing yet
+
+### 4.5.0 / 2019-04-15
+
+* Add support for `source` attribute in Contact model
+
+### 4.4.0 / 2019-04-05
+
+* Add support for `/ip_addresses` endpoint
+* Add optional argument for `Model#to_json`
+* Reintroduce support for Ruby 2.3
+* Add Rails 4 bundler support to setup script
+* Specify gemfiles called in test script
+
+### 4.3.0 / 2019-03-18
+
+* Drop support for Ruby 2.2 and 2.3: they have reached end-of-life
+* Add support for Ruby 2.5 and 2.6
+* Add `scopes` argument to `Nylas::API#authenticate` for
+  [selective sync](https://docs.nylas.com/docs/how-to-use-selective-sync)
+* Add `Account#revoke_all`
+* Add X-Nylas-Client-Id header for HTTP requests
+
 ### 4.2.4 / 2018-08-07
 * Enables silent addition of fields to API without impact to SDK
 * Fixes api attribute breakage on enumeration (https://github.com/nylas/nylas-ruby/issues/188)
